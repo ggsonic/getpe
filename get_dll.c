@@ -26,6 +26,11 @@ enum machine {
 
 #define  IMAGE_FILE_DLL  0x2000
 //#define  IMAGE_FILE_DLL  0x2102
+#define IMAGE_SCN_CNT_CODE 0x00000020
+
+#define IMAGE_SCN_CNT_INITIALIZED_DATA 0x00000040
+
+#define IMAGE_SCN_CNT_UNINITIALIZED_DATA 0x00000080
 
 #define  FILE_TYPE(X)  (X & (IMAGE_FILE_EXECUTABLE_IMAGE |IMAGE_FILE_DLL ))
 
@@ -43,7 +48,7 @@ enum machine {
 
 //#define IMAGE_NT_SIGNATURE                  0x50450000  // PE00
 
-#define FIELD_OFFSET(type, field)    ((LONG)(LONG_PTR)&(((type *)0)->field))
+//#define FIELD_OFFSET(type, field)    ((LONG)(LONG_PTR)&(((type *)0)->field))
 
 
 
@@ -591,17 +596,42 @@ char * findDosHeader(char * buffer, DWORD length, DWORD *out_length) {
         if (!(fileheader->Characteristics & IMAGE_FILE_DLL)){
             continue;
         }
+        DWORD size = 0;
+        printf("found one1.8-%d-%d-%d-%d-\n",ntheader->OptionalHeader.SizeOfCode,ntheader->OptionalHeader.SizeOfInitializedData,ntheader->OptionalHeader.SizeOfUninitializedData,ntheader->OptionalHeader.SizeOfHeaders);
+	size=ntheader->OptionalHeader.SizeOfCode+ntheader->OptionalHeader.SizeOfInitializedData+ntheader->OptionalHeader.SizeOfUninitializedData+ntheader->OptionalHeader.SizeOfHeaders;
+	/*
         //IMAGE_SECTION_HEADER * section = IMAGE_FIRST_SECTION(ntheader);
         IMAGE_SECTION_HEADER * section =(ntheader + sizeof(DWORD)+ sizeof(IMAGE_FILE_HEADER) + fileheader->SizeOfOptionalHeader ) ;
 	//printf("found one2-%d",section->SizeOfRawData);
         DWORD size = 0;
+        DWORD size_of_code = 0;
+        DWORD size_of_initialized_data= 0;
+        DWORD size_of_uninitialized_data= 0;
         for (int j = 0; j < fileheader->NumberOfSections; j++) {
-	printf("found one2.5-%d-%d-%d",section->SizeOfRawData, section->PointerToRawData,size);
-            if ((section + j)->SizeOfRawData + (section + j)->PointerToRawData > size) {
-                size = (section + j)->SizeOfRawData + (section + j)->PointerToRawData;
+            //printf("found one2.5-%d-%d-%d-\n",section[j].SizeOfRawData, section[j].PointerToRawData,size);
+	    if (section[j].Characteristics & IMAGE_SCN_CNT_CODE) {
+            size_of_code += section[j].Misc.VirtualSize;
             }
+            if (section[j].Characteristics & IMAGE_SCN_CNT_INITIALIZED_DATA) {
+                size_of_initialized_data += section[j].Misc.VirtualSize;
+            }
+            if (section[j].Characteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA) {
+                size_of_uninitialized_data += section[j].Misc.VirtualSize;
+            }
+	    printf("sizeofcode-%d-%d-%d-\n",size_of_code,size_of_initialized_data,size_of_uninitialized_data);
+            //if (section[j].SizeOfRawData + section[j].PointerToRawData > size) {
+            //    size = section[j].SizeOfRawData + section[j].PointerToRawData;
+            //}
         }
-	size=2219520;
+	//size=section[2].VirtualAddress+section[2].Misc.VirtualSize;
+	*/
+	size = (DWORD)((size-1)/ntheader->OptionalHeader.FileAlignment) +1;
+        size = size *ntheader->OptionalHeader.FileAlignment;
+	printf("size-%d-\n",size);
+
+
+	//printf("found one2.8-%d-%d-%d-\n",section[2].VirtualAddress, section[2].Misc.VirtualSize,size);
+	//size=2219520;
 	//printf("found one3");
         *out_length = size;
         return (buffer + i);
@@ -626,8 +656,6 @@ void find(const char * fileName) {
     memset (pFileBuffer,0,length);
     //fread_s(pFileBuffer, length, 1, length, fp);
     result=fread(pFileBuffer,1,length, fp);
-    //printf("len%d-result%d-%x%x%x%x",length,result,pFileBuffer[0],pFileBuffer[1],pFileBuffer[2],pFileBuffer[3]);
-    //printf("len%d-result%d-%x",length,result,*pFileBuffer);
     char* ppe = pFileBuffer;
     DWORD image_length = 0;
     DWORD buffer_length = length;
@@ -638,7 +666,7 @@ void find(const char * fileName) {
 
         ppe = findDosHeader(ppe + image_length, length - (ppe - pFileBuffer) - image_length, &image_length);
         if (ppe != NULL) {
-	printf("found one4-%s.%x-%x.dll", fileName, ppe[0], image_length);
+	    //printf("found one4-%s.%x-%x.dll", fileName, ppe[0], image_length);
             //sprintf_s(f, "%s.%x-%x.dll", fileName, ppe, image_length);
             //snprintf(f, "%x.dll", image_length);
             FILE* outfp = 0;
@@ -661,6 +689,6 @@ void find(const char * fileName) {
 }
 int main(){
   printf("hello");
-  //find("1.dll2");
-  find("1.bin");
+//  find("1.dll2");
+ find("1.bin");
 }

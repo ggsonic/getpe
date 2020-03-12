@@ -50,18 +50,11 @@ enum machine {
 
 //#define FIELD_OFFSET(type, field)    ((LONG)(LONG_PTR)&(((type *)0)->field))
 
-
-
-
-
-
 //NumberOfRvaAndSizes的默认值，目录项数目默认为16
 
 #define IMAGE_NUMBEROF_DIRECTORY_ENTRIES    16
 
 // Directory Entries
-
-
 
 #define IMAGE_DIRECTORY_ENTRY_EXPORT          0   // Export Directory
 
@@ -99,8 +92,6 @@ enum machine {
 #define IMAGE_SIZEOF_SHORT_NAME              8
 
 #define IMAGE_SIZEOF_SECTION_HEADER          40
-
-
 
 // DOS MZ Header(IMAGE_DOS_HEADER)
 
@@ -162,7 +153,6 @@ typedef struct _IMAGE_DOS_HEADER {      // DOS .EXE header
 // size:      14h
 
 
-
 typedef struct _IMAGE_FILE_HEADER {
 
     WORD    Machine;								//   						 ;IMAGE_NT_HEADERS+04h+00h
@@ -180,8 +170,6 @@ typedef struct _IMAGE_FILE_HEADER {
     WORD    Characteristics;						//  文件特征值,决定装载方式  ;IMAGE_NT_HEADERS+04h+12h      ;IMAGE_NT_HEADERS+16h
 
 } IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;			
-
-
 
 //
 
@@ -205,15 +193,11 @@ typedef struct _IMAGE_DATA_DIRECTORY {
 
 } IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
 
-
-
-
 // Optional header(IMAGE_OPTIONAL_HEADER32)
 
 // address:	IMAGE_NT_HEADERS->OptionalHeader or IMAGE_NT_HEADERS+18h
 
 // size:    应与IMAGE_FILE_HEADER->SizeOfOptionalHeader一致。00e0h(32bit)/00fbh(64bit)，可以自行修改，但要保持一致和对齐
-
 
 typedef struct _IMAGE_OPTIONAL_HEADER {
 
@@ -222,8 +206,6 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
     // Standard fields.
 
     //
-
-
 
     WORD    Magic;									//    						 1;IMAGE_NT_HEADERS+18h+00h
 
@@ -248,8 +230,6 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
     // NT additional fields.
 
     //
-
-
 
     DWORD   ImageBase;								//    默认ImageBase			10;IMAGE_NT_HEADERS+18h+1ch	;IMAGE_NT_HEADERS+0034h
 
@@ -298,8 +278,6 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
 } IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;
 
 
-
-
 // PE header(IMAGE_NT_HEADERS)            
 
 // address: ImageBase + IMAGE_DOS_HEADER.e_lfanew  
@@ -321,28 +299,12 @@ typedef struct _IMAGE_NT_HEADERS {
 typedef IMAGE_NT_HEADERS32 IMAGE_NT_HEADERS;
 typedef PIMAGE_NT_HEADERS32 PIMAGE_NT_HEADERS;
 
-//
-
-
-
-
-
-
-//
-
-// DLL support.
-
-//
-
-
 
 //
 
 // Export Format
 
 //
-
-
 
 typedef struct _IMAGE_EXPORT_DIRECTORY {
 
@@ -370,17 +332,11 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
 
 } IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;
 
-
-
-
-
 //
 
 // Import Format
 
 //
-
-
 
 #define IMAGE_ORDINAL_FLAG64 0x8000000000000000
 
@@ -397,8 +353,6 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
 #define IMAGE_SNAP_BY_ORDINAL32(Ordinal) ((Ordinal & IMAGE_ORDINAL_FLAG32) != 0)
 
 
-
-//IID
 
 //#define IMAGE_DIRECTORY_ENTRY_IMPORT          1   // Import Directory
 
@@ -432,7 +386,6 @@ typedef struct _IMAGE_IMPORT_DESCRIPTOR {
 
 typedef IMAGE_IMPORT_DESCRIPTOR *PIMAGE_IMPORT_DESCRIPTOR;
 //typedef IMAGE_IMPORT_DESCRIPTOR UNALIGNED *PIMAGE_IMPORT_DESCRIPTOR;
-
 
 
 // 
@@ -481,10 +434,6 @@ typedef struct _IMAGE_THUNK_DATA32 {
 
 typedef IMAGE_THUNK_DATA32 * PIMAGE_THUNK_DATA32;
 
-
-
-
-
 typedef struct _IMAGE_IMPORT_BY_NAME {
 
     WORD    Hint;
@@ -494,17 +443,11 @@ typedef struct _IMAGE_IMPORT_BY_NAME {
 } IMAGE_IMPORT_BY_NAME, *PIMAGE_IMPORT_BY_NAME;
 
 
-
-
-
-
-
 //
 
 // Based relocation format.
 
 //
-
 
 
 typedef struct _IMAGE_BASE_RELOCATION {
@@ -521,16 +464,6 @@ typedef IMAGE_BASE_RELOCATION * PIMAGE_BASE_RELOCATION;
 //typedef IMAGE_BASE_RELOCATION UNALIGNED * PIMAGE_BASE_RELOCATION;
 
 
-
-
-
-
-
-
-
-
-//
-
 // Section header(IMAGE_SECTION_HEADER)
 
 // IMAGE_SECTION_HEADER数组address: IMAGE_FIRST_SECTION : ImageBase(NT_HEADERS的首地址) + OptionalHeader在NT_HEADERS的偏移 + FileHeader.SizeOfOptionalHeader(OptionalHeader的大小)
@@ -538,8 +471,6 @@ typedef IMAGE_BASE_RELOCATION * PIMAGE_BASE_RELOCATION;
 // size: 28h (#define IMAGE_SIZEOF_SECTION_HEADER 40)  
 
 //
-
-
 
 typedef struct _IMAGE_SECTION_HEADER {
 
@@ -667,7 +598,6 @@ void find(const char * fileName) {
         ppe = findDosHeader(ppe + image_length, length - (ppe - pFileBuffer) - image_length, &image_length);
         if (ppe != NULL) {
 	    //printf("found one4-%s.%x-%x.dll", fileName, ppe[0], image_length);
-            //sprintf_s(f, "%s.%x-%x.dll", fileName, ppe, image_length);
             //snprintf(f, "%x.dll", image_length);
             FILE* outfp = 0;
             //fopen_s(&outfp, f, "wb+");
@@ -688,7 +618,7 @@ void find(const char * fileName) {
     fclose(fp);
 }
 int main(){
-  printf("hello");
+    printf("hello");
 //  find("1.dll2");
- find("1.bin");
+    find("1.bin");
 }
